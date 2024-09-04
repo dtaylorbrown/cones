@@ -1,0 +1,23 @@
+---
+
+interface Props {
+  interval: number;
+  colours: string[];
+}
+
+const { interval, colours } = Astro.props;
+
+console.log({ interval, colours });
+
+---
+
+<div>
+  I am a cone
+</div>
+
+<style>
+  div {
+    margin-top: 30px;
+    background-color: black;
+  }
+</style>
