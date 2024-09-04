@@ -1,48 +1,95 @@
 ---
+import type { FixMe } from '../utils/types';
+
 import Layout from '../layouts/Layout.astro';
 import Cone from '../components/Cone.astro';
+
+type FormData = {
+	interval?: number,
+	cones?: string[],
+}
+
+const formData: FormData = {};
+
+if(Astro.request.method === "POST"){
+	const data = await Astro.request.formData();
+
+	const getConeSelection = (data: FixMe) => {
+		const coneSelection: string[] = [];
+		for(const [key, value] of data){
+			if(key === 'cone'){
+				coneSelection.push(value);
+			}
+		}
+		return coneSelection;
+	}
+
+	formData.interval = Number(data.get("interval")) || 10;
+	formData.cones = getConeSelection(data.entries());
+}
+
 ---
 
 <Layout title="Look ma! Cones">
 	<main>
-		<form>
-			<label>
-				Interval (defaults to 30s)
-				<input type="number" name="interval" id="interval" placeholder="30">
-			</label>
-			<fieldset>
-				<legend>Select cone colours</legend>
+		{!formData.interval || !formData.cones?.length ? 
+			<form method="post">
 				<label>
-					<input type="checkbox" name="cone-red" id="cone-red" value="red">
-					red
+					Interval:
+					<input type="number" name="interval" id="interval" placeholder="Defaults to 10s">
 				</label>
-				<label>
-					<input type="checkbox" name="cone-blue" id="cone-blue" value="blue">
-					blue
-				</label>
-				<label>
-					<input type="checkbox" name="cone-green" id="cone-green" value="green">
-					green
-				</label>
-				<label>
-					<input type="checkbox" name="cone-orange" id="cone-orange" value="orange">
-					orange
-				</label>
-				<label>
-					<input type="checkbox" name="cone-white" id="cone-white" value="white">
-					white
-				</label>
-				<label>
-					<input type="checkbox" name="cone-yellow" id="cone-yellow" value="yellow">
-					yellow
-				</label>
-			</fieldset>
-		</form>
-		<Cone interval={10} colours={['red', 'blue', 'green', 'orange', 'white']} />
+				<fieldset>
+					<legend>Select cone colours: </legend>
+					<label>
+						<input type="checkbox" name="cone" id="cone_red" value="red">
+						red
+					</label>
+					<label>
+						<input type="checkbox" name="cone" id="cone_blue" value="blue">
+						blue
+					</label>
+					<label>
+						<input type="checkbox" name="cone" id="cone_green" value="green">
+						green
+					</label>
+					<label>
+						<input type="checkbox" name="cone" id="cone_orange" value="orange">
+						orange
+					</label>
+					<label>
+						<input type="checkbox" name="cone" id="cone_white" value="white">
+						white
+					</label>
+					<label>
+						<input type="checkbox" name="cone" id="cone_yellow" value="yellow">
+						yellow
+					</label>
+				</fieldset>
+				<input type="submit" value="Letsaa go!">
+			</form>
+			: 
+			<Cone interval={formData.interval} colours={formData.cones} />
+		}
 	</main>
 </Layout>
 
 <style>
+	main {
+		height: 100vh;
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+	input[type="number"],
+	label {
+		width: 100%;
+		margin-bottom: 5px;
+	}
+	form {
+		border: 2px solid black;
+		padding: 20px;
+		margin: 0 30px;
+	}
 	fieldset {
 		border: none;
 		padding: 0;
@@ -50,5 +97,24 @@ import Cone from '../components/Cone.astro';
 	}
 	fieldset label {
 		display: block;
+	}
+
+	input[type="number"] {
+		background: white;
+    border: 2px solid black;
+    color: black;
+		display: block;
+    width: 240px;
+    height: 40px;
+		margin-bottom: 10px;
+	}
+	input[type="submit"] {
+		margin-top: 10px;
+		background: white;
+    border: 2px solid black;
+    color: black;
+    width: 120px;
+    height: 40px;
+    cursor: pointer;
 	}
 </style>

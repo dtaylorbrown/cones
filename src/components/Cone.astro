@@ -7,17 +7,70 @@ interface Props {
 
 const { interval, colours } = Astro.props;
 
-console.log({ interval, colours });
-
 ---
 
-<div>
-  I am a cone
+<div class="wrapper">
+  <p id="countdowntimer"></p>
+  <div id="cone"></div>
+  <button onclick="window.location.href=window.location.href">go again</button>
 </div>
 
+<script define:vars={{ interval, colours }}>
+  function getColor () {
+    const colour = colours[colours.length * Math.random() | 0];
+    return colour;
+  }
+
+  const cone = document.getElementById('cone');
+  const countdowntimer = document.getElementById("countdowntimer");
+
+  cone.style.backgroundColor = colours[0];
+  countdowntimer.innerHTML = interval;
+  
+  let timeleft = interval;
+
+  setInterval(function() {
+    if(timeleft <= 0){
+      timeleft = interval
+      cone.style.backgroundColor = getColor();
+    }
+    countdowntimer.innerHTML = timeleft;
+    timeleft -= 1;
+  }, 1000)
+
+</script>
+
 <style>
-  div {
-    margin-top: 30px;
-    background-color: black;
+  .wrapper {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+  }
+  #cone {
+    display: block;
+    height: 100%;
+    background: pink;
+  }
+
+  #countdowntimer {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 12rem;
+  }
+
+  button {
+    position: absolute;
+    left: 50%;
+    bottom: 50px;
+    transform: translate(-50%, -50%);
+    margin: 0 auto;
+    background: white;
+    border: 2px solid black;
+    color: black;
+    width: 120px;
+    height: 40px;
+    cursor: pointer;
   }
 </style>
